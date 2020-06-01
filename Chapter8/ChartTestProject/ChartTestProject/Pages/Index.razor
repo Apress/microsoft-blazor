@@ -1,0 +1,45 @@
+﻿@page "/"
+
+@using U2U.Components.Chart
+@using System.Drawing
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<LineChart Id="test" Class="linechart" Data="@Data" Options="@Options" />
+
+@code {
+
+  private LineChartData Data { get; set; }
+
+  private ChartOptions Options { get; set; }
+
+  protected override void OnInitialized()
+  {
+    this.Options = ChartOptions.Default;
+
+    this.Data = new LineChartData
+    {
+      Labels = new string[] { "", "A", "B", "C" },
+      Datasets = new LineChartData.DataSet[]
+      {
+        new LineChartData.DataSet
+        {
+          Label = "Test",
+          BackgroundColor = Color.Transparent.ToJs(),
+          BorderColor = Color.FromArgb(10, 96, 157, 219)
+                            .ToJs(),
+          BorderWidth = 5,
+          Data = new List<Point>
+          {
+            new Point(0, 0),
+            new Point(1, 11),
+            new Point(2, 76),
+            new Point(3, 13)
+          }
+        }
+      }
+    };
+  }
+}

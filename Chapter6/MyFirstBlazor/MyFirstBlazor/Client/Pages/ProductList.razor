@@ -1,0 +1,8 @@
+﻿<div>
+  @foreach (var product in productService.GetAllProducts())
+  {
+    <div>@product.Name</div>
+    <div>@product.Description</div>
+    <div>@product.UnitPrice</div>
+  }
+</div>

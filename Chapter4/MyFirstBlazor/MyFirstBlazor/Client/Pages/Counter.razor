@@ -1,0 +1,138 @@
+﻿@page "/counter"
+
+@using System.Threading
+
+<h1>Counter</h1>
+
+<p>
+  Current count:
+  <span class="@backgroundColor">@currentCount</span>
+</p>
+
+<p>
+  <input type="number" @bind="@increment" />
+</p>
+<button class="btn btn-primary"
+        disabled="@(currentCount >= 10)"
+        @onclick="IncrementCount">
+  Click me
+</button>
+
+<button class="btn btn-secondary"
+        @onclick="AutoIncrement">Auto Increment</button>
+
+@*<p>
+  <h1>Date Format</h1>
+
+  <input @bind="Today" @bind:format="yyyy-MM-dd" />
+
+  <button class="btn btn-primary"
+          @onclick="IncrementDate">
+    Next Day
+  </button>
+
+</p>*@
+
+@*<input type="number"
+  value="@increment"
+  @onchange="@((ChangeEventArgs e) => increment = int.Parse($"{e.Value}"))" />*@
+
+@*<input type="number"
+  @bind="@increment"
+  @bind:event="oninput" />*@
+
+@*<input type="number"
+  @bind="@increment"
+  @onkeypress="KeyHandler" />*@
+
+@*<input type="number"
+  @bind="@increment"
+  @onkeypress="KeyHandler"
+  @onkeypress:preventDefault="shouldPreventDefault" />*@
+
+@*<input type="number"
+  @bind="@increment"
+  @onkeypress="KeyHandler"
+  @onkeypress:preventDefault="@(increment < 10)" />*@
+
+@*<input type="number"
+  @bind="@increment"
+  @onkeypress="KeyHandler"
+  @onkeypress:preventDefault="@true" />*@
+
+@*<div style="width: 400px; height: 400px; background: yellow"
+       @onmousemove="OuterMouseMove">
+
+    @outerPos
+
+    <div style="width: 300px; height: 300px; background: green; margin:50px"
+         @onmousemove="InnerMouseMove"
+         @onmousemove:stopPropagation>
+
+      @innerPos
+
+    </div>
+  </div>*@
+
+@*<button class="btn btn-primary"
+          disabled="@(currentCount >= 10)"
+          @onclick="@(() => currentCount += 1)">
+    Click me
+  </button>*@
+
+@code {
+    private int currentCount = 0;
+    private int increment = 1;
+    private string backgroundColor = "red-background";
+
+    private void IncrementCount()
+    {
+      Console.WriteLine("++");
+      currentCount += increment;
+      backgroundColor = (currentCount % 2 == 0) ?
+                        "red-background" : "yellow-background";
+    }
+
+    private void AutoIncrement()
+    {
+      var timer = new System.Threading.Timer(
+        callback: (_) =>
+        {
+          IncrementCount();
+          this.StateHasChanged();
+        },
+      state: null,
+        dueTime: TimeSpan.FromSeconds(1),
+        period: TimeSpan.FromSeconds(1));
+    }
+
+
+    //private DateTime Today { get; set; } = DateTime.Now;
+
+    //private void IncrementDate()
+    //  => Today = Today.AddDays(1);
+
+    //private string outerPos = "Nothing yet";
+
+    //private void OuterMouseMove(MouseEventArgs e)
+    //  => outerPos = $"Mouse last at {e.ClientX}x{e.ClientY}";
+
+    //private string innerPos = "Nothing yet";
+
+    //private void InnerMouseMove(MouseEventArgs e)
+    //  => innerPos = $"Mouse last at {e.ClientX}x{e.ClientY}";
+
+
+    //private void KeyHandler(KeyboardEventArgs e)
+    //{
+    //  Console.WriteLine(e.Code);
+    //  if (e.Key == "+")
+    //  {
+    //    increment += 1;
+    //  }
+    //  if (e.Key == "-")
+    //  {
+    //    increment -= 1;
+    //  }
+    //}
+}

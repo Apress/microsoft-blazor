@@ -1,0 +1,35 @@
+﻿@page "/"
+
+@using MyFirstBlazor.Components
+
+<DismissableAlert @ref="alert" @bind-Show="@ShowAlert">
+  <span class="oi oi-check mr-2" aria-hidden="true"></span>
+  <strong>Blazor is soo cool!</strong>
+</DismissableAlert>
+
+<Timer TimeInSeconds="5" Tick="@(() => alert.Dismiss())" />
+
+<button @onclick="@ToggleAlert">Toggle</button>
+
+<GrandMother>
+  <GrandChild />
+  <DismissableAlert Show="true">
+    <GrandChild />
+  </DismissableAlert>
+</GrandMother>
+
+<GrandChild />
+
+@code {
+
+  //MyFirstBlazor.Components.DismissableAlert x;
+
+  private DismissableAlert alert;
+
+  public bool ShowAlert { get; set; } = true;
+
+  public void ToggleAlert()
+  {
+    ShowAlert = !ShowAlert;
+  }
+}

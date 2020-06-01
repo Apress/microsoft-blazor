@@ -1,0 +1,25 @@
+﻿@inject IChartInterop JsInterop
+
+<canvas id="@Id" class="@Class">
+</canvas>
+
+@functions {
+
+  [Parameter]
+  public string Id { get; set; }
+
+  [Parameter]
+  public string Class { get; set; }
+
+  [Parameter]
+  public LineChartData Data { get; set; }
+
+  [Parameter]
+  public ChartOptions Options { get; set; } = ChartOptions.Default;
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    string id = Id;
+    JsInterop.CreateLineChart(Id, Data, Options);
+  }
+}

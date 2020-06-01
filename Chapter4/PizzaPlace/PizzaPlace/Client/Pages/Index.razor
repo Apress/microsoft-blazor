@@ -1,0 +1,152 @@
+﻿@page "/"
+<!-- Menu -->
+
+<PizzaList Title="Our selection of pizzas"
+           Menu="@State.Menu"
+           Selected="@( async (pizza)
+             => AddToBasket(pizza))" />
+
+@*<h1>Our selection of pizzas</h1>
+
+  @foreach (var pizza in State.Menu.Pizzas)
+  {
+    <div class="row">
+      <div class="col">
+        @pizza.Name
+      </div>
+      <div class="col">
+        @pizza.Price
+      </div>
+      <div class="col">
+        <img src="@SpicinessImage(pizza.Spiciness)"
+             alt="@pizza.Spiciness" />
+      </div>
+      <div class="col">
+        <button class="btn btn-success"
+                @onclick="@(() => AddToBasket(pizza))">
+          Add
+        </button>
+      </div>
+    </div>
+  }*@
+
+<!-- End menu -->
+<!-- Shopping Basket -->
+
+<ShoppingBasket Title="Your current order"
+                Basket="@State.Basket"
+                GetPizzaFromId="@State.Menu.GetPizza"
+                Selected="@( (pos) => RemoveFromBasket(pos))" />
+
+@*@if (State.Basket.Orders.Any())
+  {
+    <h1>Your current order</h1>
+
+    @foreach (var (pizza, pos) in State.Basket.Orders.Select(
+   (id, pos) => (State.Menu.GetPizza(id), pos)))
+    {
+      <div class="row">
+        <div class="col">
+          @pizza.Name
+        </div>
+        <div class="col">
+          @pizza.Price
+        </div>
+        <div class="col">
+          <button class="btn btn-danger"
+                  @onclick="@(() => RemoveFromBasket(pos))">
+            Remove
+          </button>
+        </div>
+      </div>
+    }
+    <div class="row">
+      <div class="col"> Total:</div>
+      <div class="col"> @State.TotalPrice </div>
+      <div class="col"> </div>
+    </div>
+  }*@
+
+<!-- End shopping basket -->
+<!-- Customer entry -->
+
+<CustomerEntry Title="Please enter your details below"
+               ButtonTitle="Checkout"
+               ButtonClass="btn btn-primary"
+               @bind-Customer="@State.Basket.Customer"
+               Submit="@PlaceOrder" />
+
+@*<h1>Please enter your details below</h1>
+
+  <EditForm OnValidSubmit="PlaceOrder"
+            Model="@State.Basket.Customer">
+    <DataAnnotationsValidator />
+
+    <div class="form-group row mb-1">
+      <label class="col-sm-3 col-form-label"
+             for="FirstName">Name:</label>
+      <div class="col-sm-9">
+        <InputText class="form-control"
+                   @bind-Value="@State.Basket.Customer.Name" />
+        <ValidationMessage For="@(() => State.Basket.Customer.Name)" />
+      </div>
+    </div>
+    <div class="form-group row mb-1">
+      <label class="col-sm-3 col-form-label"
+             for="LastName">Street:</label>
+      <div class="col-sm-9">
+        <InputText class="form-control"
+                   @bind-Value="@State.Basket.Customer.Street" />
+        <ValidationMessage For="@(() => State.Basket.Customer.Street)" />
+      </div>
+    </div>
+    <div class="form-group row mb-1">
+      <label class="col-sm-3 col-form-label"
+             for="Birthday">City:</label>
+      <div class="col-sm-9">
+        <InputText class="form-control"
+                   @bind-Value="@State.Basket.Customer.City" />
+        <ValidationMessage For="@(() => State.Basket.Customer.City)" />
+      </div>
+    </div>
+    <div class="form-group mb-0">
+      <button type="submit"
+              id="BtnRegister" class="btn btn-primary">
+        Checkout
+      </button>
+    </div>
+  </EditForm>*@
+
+<!-- End customer entry -->
+
+<p>@State.ToJson()</p>
+
+@inject IMenuService menuService
+@inject IOrderService orderService
+
+@code {
+
+  private State State { get; } = new State();
+
+  protected override async Task OnInitializedAsync()
+  {
+    State.Menu = await menuService.GetMenu();
+  }
+
+  private void AddToBasket(Pizza pizza)
+  {
+    Console.WriteLine($"Added pizza {pizza.Name}");
+    State.Basket.Add(pizza.Id);
+  }
+
+  private void RemoveFromBasket(int pos)
+  {
+    Console.WriteLine($"Removing pizza at pos {pos}");
+    State.Basket.RemoveAt(pos);
+  }
+
+  private async Task PlaceOrder()
+  {
+    await orderService.PlaceOrder(State.Basket);
+  }
+}

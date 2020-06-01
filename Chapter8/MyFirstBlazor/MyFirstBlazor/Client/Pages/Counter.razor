@@ -1,0 +1,91 @@
+﻿@page "/counter"
+@page "/counter/{CurrentCount:int}"
+
+@layout NestedLayout
+@inject NavigationManager uriHelper
+@inject IJSRuntime JSRuntime
+
+@using MyFirstBlazor.Client.Services
+@inject ILocalStorage LocalStorage
+
+<h1>Counter</h1>
+
+<p>
+  Current count:
+  <span>@CurrentCount</span>
+
+  <input @ref="inputElement" @bind="CurrentCount" />
+
+</p>
+
+<button class="btn btn-primary"
+        @onclick="IncrementCount">
+  Click me
+</button>
+
+<a class="btn btn-primary" href="/">Home</a>
+
+<button class="btn btn-primary" @onclick="StartFrom50">
+  Start From 50
+</button>
+
+@code {
+
+  private ElementReference inputElement;
+
+    // If you are doing this with Blazor Server, move this logic into OnAfterRenderAsync
+    // Because data has changed, you should also add StateHasChanged()
+  protected override async Task OnInitializedAsync()
+  {
+    //var objRef = DotNetObjectReference.Create(this);
+    //await JSRuntime.InvokeVoidAsync("blazorLocalStorage.watch", objRef);
+    await LocalStorage.WatchAsync(this);
+
+    //int? c = await JSRuntime.InvokeAsync<int?>("blazorLocalStorage.get", nameof(CurrentCount));
+
+    currentCount = await LocalStorage.GetProperty<int>(nameof(CurrentCount));
+  }
+
+  protected override async Task OnAfterRenderAsync(bool first)
+  {
+    await JSRuntime.InvokeVoidAsync("blazorFocus.set", inputElement);
+  }
+
+  private int currentCount = 0;
+
+  [Parameter]
+  public int CurrentCount
+  {
+    get => currentCount;
+    set
+    {
+      if (currentCount != value)
+      {
+        currentCount = value;
+
+        LocalStorage.SetProperty<int>(nameof(CurrentCount), currentCount);
+
+        // JSRuntime.InvokeAsync<string>("blazorLocalStorage.set", nameof(CurrentCount), currentCount);
+      }
+    }
+  }
+
+  [JSInvokable]
+  public async Task UpdateCounter()
+  {
+    Console.WriteLine("Update");
+    //int? c = await JSRuntime.InvokeAsync<int?>("blazorLocalStorage.get", nameof(CurrentCount));
+    int? c = await LocalStorage.GetProperty<int?>(nameof(CurrentCount));
+    if (c.HasValue)
+    {
+      currentCount = c.Value;
+    }
+    this.StateHasChanged();
+  }
+
+  private void IncrementCount()
+=> CurrentCount += 1;
+
+  private void StartFrom50()
+  => uriHelper.NavigateTo("/Counter/50");
+}

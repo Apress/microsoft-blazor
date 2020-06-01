@@ -1,0 +1,30 @@
+﻿@typeparam TItem
+
+<table border="1">
+  <thead>
+    <tr>@Header</tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Items)
+    {
+      <tr>@Row(item)</tr>
+    }
+  </tbody>
+  <tfoot>
+    <tr>@Footer</tr>
+  </tfoot>
+</table>
+
+@functions {
+  [Parameter]
+  public RenderFragment Header { get; set; }
+
+  [Parameter]
+  public RenderFragment<TItem> Row { get; set; }
+
+  [Parameter]
+  public RenderFragment Footer { get; set; }
+
+  [Parameter]
+  public IReadOnlyList<TItem> Items { get; set; }
+}

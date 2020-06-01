@@ -1,0 +1,72 @@
+﻿<h1>@Title</h1>
+
+<EditForm OnValidSubmit="@Submit"
+          Model="@Customer">
+  <DataAnnotationsValidator />
+
+  <InputWatcher @ref="inputWatcher" FieldChanged="@FieldChanged" />
+
+  <div class="form-group row mb-1">
+    <label class="col-sm-3 col-form-label"
+           for="FirstName">Name:</label>
+    <div class="col-sm-9">
+      <InputText class="form-control"
+                 @bind-Value="@Customer.Name" />
+      <ValidationMessage For="@(() => Customer.Name)" />
+    </div>
+  </div>
+  <div class="form-group row mb-1">
+    <label class="col-sm-3 col-form-label"
+           for="LastName">Street:</label>
+    <div class="col-sm-9">
+      <InputText class="form-control"
+                 @bind-Value="@Customer.Street" />
+      <ValidationMessage For="@(() => Customer.Street)" />
+    </div>
+  </div>
+  <div class="form-group row mb-1">
+    <label class="col-sm-3 col-form-label"
+           for="Birthday">City:</label>
+    <div class="col-sm-9">
+      <InputText class="form-control"
+                 @bind-Value="@Customer.City" />
+      <ValidationMessage For="@(() => Customer.City)" />
+    </div>
+  </div>
+  <div class="form-group mb-0">
+    <button type="submit"
+            disabled="@isInvalid"
+            id="BtnRegister" class="@ButtonClass">
+      @ButtonTitle
+    </button>
+  </div>
+</EditForm>
+
+@code {
+  private InputWatcher inputWatcher;
+  private bool isInvalid = true;
+
+  [Parameter]
+  public string Title { get; set; }
+
+  [Parameter]
+  public string ButtonTitle { get; set; }
+
+  [Parameter]
+  public string ButtonClass { get; set; }
+
+  [Parameter]
+  public Customer Customer { get; set; }
+
+  [Parameter]
+  public EventCallback<Customer> CustomerChanged { get; set; }
+
+  [Parameter]
+  public EventCallback Submit { get; set; }
+
+  private void FieldChanged(string fieldName)
+  {
+    CustomerChanged.InvokeAsync(Customer);
+    isInvalid = !inputWatcher.Validate();
+  }
+}

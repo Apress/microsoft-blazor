@@ -1,0 +1,38 @@
+﻿<h1>@Title</h1>
+
+@if (Menu == null || Menu.Pizzas == null || Menu.Pizzas.Count == 0)
+{
+  <div style="height:20vh;" class="pt-3">
+    <div class="mx-left pt-3" style="width:200px">
+      <div class="progress">
+        <div class="progress-bar bg-danger
+                    progress-bar-striped
+                    progress-bar-animated w-100"
+             role="progressbar"
+             aria-valuenow="100" aria-valuemin="0"
+             aria-valuemax="100"></div>
+      </div>
+    </div>
+  </div>
+}
+else
+{
+  @foreach (var pizza in Menu.Pizzas)
+  {
+    <PizzaItem Pizza="@pizza"
+               ButtonClass="btn btn-success"
+               ButtonTitle="Order"
+               Selected="@Selected" />
+  }
+}
+
+@code {
+  [Parameter]
+  public string Title { get; set; }
+
+  [Parameter]
+  public Menu Menu { get; set; }
+
+  [Parameter]
+  public EventCallback<Pizza> Selected { get; set; }
+}
